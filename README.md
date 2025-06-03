@@ -46,9 +46,17 @@ uv run -m cli.main process_job_applications '<application_url>' '<path_to_applic
 
 For example, using the provided sample data:
 
-```bash
-uv run -m cli.main process_job_applications 'https://docs.google.com/forms/d/e/1FAIpQLScqvt7Qu7yOLiJf-foH51Fg3gNxgmvQe6Uerxhtp4x_t9WHug/viewform' 'cli/resources/data.json' --browser-options 'cli/configs/browser-options.yaml' --retry 1 --batch-size 5
-```
+1. Process applications from a Google Form URL with a sample data file, with retry attempts and batch size specified,but no screenshot:
+
+    ```bash
+    uv run -m cli.main process_job_applications 'https://docs.google.com/forms/d/e/1FAIpQLScqvt7Qu7yOLiJf-foH51Fg3gNxgmvQe6Uerxhtp4x_t9WHug/viewform' 'cli/resources/data.json' --browser-options 'cli/configs/browser-options.yaml' --retry 1 --batch-size 5 --no-screenshot
+    ```
+
+2. Process applications from a Google Form URL with a sample data file, with retry attempts and batch size specified, and with screenshot (saved in the `screenshots` directory):
+
+    ```bash
+    uv run -m cli.main process_job_applications 'https://docs.google.com/forms/d/e/1FAIpQLScqvt7Qu7yOLiJf-foH51Fg3gNxgmvQe6Uerxhtp4x_t9WHug/viewform' 'cli/resources/data.json' --browser-options 'cli/configs/browser-options.yaml' --retry 1 --batch-size 5 --screenshot --screenshot-dir 'screenshots'
+    ```
 
 Or, run the command with the `--help` flag to see all available options:
 

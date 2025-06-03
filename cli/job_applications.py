@@ -212,7 +212,7 @@ async def retry_unconfirmed_applications(
     help="If enabled, application confirmation/submission screenshots will be taken.",
 )
 @click.option(
-    "--screenshots_dir",
+    "--screenshots-dir",
     type=click.Path(exists=True, dir_okay=True, file_okay=False, writable=True),
     help="Path to directory where screenshots should be stored.",
     required=False,
