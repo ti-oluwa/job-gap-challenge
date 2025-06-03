@@ -6,6 +6,22 @@ This repository contains my solution for the Job Gap browser automation challeng
 
 Please ensure you have `uv` installed. If not, visit [uv's documentation](https://docs.astral.sh/uv/getting-started/installation/) for installation instructions.
 
+Next, ensure you have python installed. If you do not, run these commands.
+
+Check available python versions:
+
+```bash
+uv install python --list
+```
+
+Install version of choice:
+
+```bash
+uv install python <version>
+```
+
+> Ensure the version installed is compatible with the version specified in `.python-version` (3.10.*), or delete `.python-version` and install a version >=3.10.
+
 In the project's base directory, run the following command to set up the project:
 
 ```bash
