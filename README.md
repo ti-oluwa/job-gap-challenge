@@ -63,3 +63,7 @@ Implement more robust error handling to manage network issues, invalid data form
 I tried to implement this partially by generating a schema for the each (google) form question and then using the schema and applicant data to answer the question, but it is still crude. A more sophisticated mapping system could be developed to handle various form structures and applicant data formats.
 
 The mapping system could be implemented using AI to analyze the form structure and applicant data, for better schema generation and mapping. Also, if AI isn't an option, using an indexing system (whoosh or any other library) can help in searching for relevant data in the applicant's profile. Although it may not be as accurate as AI, it can still provide a more structured approach to mapping applicant data to form questions.
+
+### Testing
+
+If more time were given, I would implement unit tests for the important job application logic to ensure reliability and extensibility later on. This would include testing the form processing logic, data validation, and error handling, as well as ensuring that the application can handle various edge cases and unexpected inputs gracefully.
