@@ -1,4 +1,4 @@
-# Job Gap AI Interview 2
+# Job Gap Browser Automation Challenge
 
 This repository contains Daniel Afolayan's solution for the second interview task in the Job Gap AI series. It includes implementations for processing job applications for various applicant profiles.
 
