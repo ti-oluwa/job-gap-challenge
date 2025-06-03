@@ -73,20 +73,21 @@ class AdvancedFormAgent(AsyncFormAgent, typing.Protocol):
     This is an extension of the basic AsyncFormAgent protocol.
     """
 
-    async def screenshot_submission(
+    async def take_screenshot(
         self,
         page: Page,
         path: typing.Union[str, Path],
-        quality: typing.Annotated[int, Ge(0), Le(100)] = 100,
-        type_: typing.Literal["jpeg", "png"] = "jpeg",
+        quality: typing.Optional[typing.Annotated[int, Ge(0), Le(100)]] = None,
+        file_type: typing.Union[typing.Literal["jpeg", "png"], str] = "jpeg",
     ) -> None:
         """
-        Take a screenshot of the submission confirmation page.
+        Take a screenshot of the page.
 
-        :param page: The page containing the form submission confirmation.
+        :param page: The page to take a screenshot of.
         :param path: The path to save the screenshot.
-        :param quality: The quality of the screenshot (0-100).
-        :param type_: The type of the screenshot ('jpeg' or 'png').
+        :param quality: The quality of the screenshot (0-100 for jpeg, should be ignored for png).
+        :param file_type: The file type of the screenshot ('jpeg' or 'png').
         :raises AgentError: If the directory does not exist.
         """
         raise NotImplementedError
+    

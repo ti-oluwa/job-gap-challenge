@@ -190,26 +190,28 @@ class GoogleFormAgent:
         await page.wait_for_load_state("networkidle")
         return "Your response has been recorded" in await page.content()
 
-    async def screenshot_submission(
+    async def take_screenshot(
         self,
         page: Page,
         path: typing.Union[str, Path],
-        quality: typing.Annotated[int, Ge(0), Le(100)] = 100,
-        type_: typing.Literal["jpeg", "png"] = "jpeg",
+        quality: typing.Optional[typing.Annotated[int, Ge(0), Le(100)]] = None,
+        file_type: typing.Union[typing.Literal["jpeg", "png"], str] = "jpeg",
     ) -> None:
         """
         Take a screenshot of the submission confirmation page.
 
         :param page: The page containing the form submission confirmation.
         :param path: The path to save the screenshot.
-        :param quality: The quality of the screenshot (0-100).
-        :param type_: The type of the screenshot ('jpeg' or 'png').
+        :param quality: Optional quality of the screenshot (0-100 for jpeg, should be ignored for png).
+        :param file_type: The file type of the screenshot ('jpeg' or 'png').
         :raises AgentError: If the directory does not exist.
         """
-        if type_ not in ["jpeg", "png"]:
+        if file_type not in ["jpeg", "png"]:
             raise ValueError(
-                f"Invalid screenshot type {type_}. Supported types are 'jpeg' and 'png'."
+                f"Invalid screenshot type {file_type}. Supported types are 'jpeg' and 'png'."
             )
+
+        file_type = typing.cast(typing.Literal["jpeg", "png"], file_type.lower())
         path = Path(path)
         if not path.parent.exists() or not path.parent.is_dir():
             raise ValueError(f"Directory {path.parent} does not exist.")
@@ -218,10 +220,8 @@ class GoogleFormAgent:
                 f"Invalid file type {path.suffix}. Supported types are .jpeg, .jpg, and .png."
             )
 
-        logger.debug(
-            f"Taking screenshot of the submission confirmation page at {path} with quality {quality} and type {type_}."
-        )
-        screenshot = await page.screenshot(quality=quality, type=type_)
+        logger.info(f"Taking screenshot of page {page.url!r}.\n")
+        screenshot = await page.screenshot(quality=quality, type=file_type)
         async with aio_open(path, "wb") as f:
             await f.write(screenshot)
-        logger.debug(f"Screenshot saved to {path}.")
+        logger.debug(f"Screenshot saved to {path!r}.")

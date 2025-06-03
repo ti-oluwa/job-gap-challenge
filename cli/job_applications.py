@@ -37,6 +37,8 @@ async def process_application_data(
     browser_options: typing.Optional[typing.MutableMapping[str, typing.Any]] = None,
     retry_limit: int = 2,
     retry_backoff: float = 3.0,
+    take_screenshots: bool = False,
+    screenshots_dir: typing.Optional[Path] = None,
 ) -> typing.Tuple[typing.List[ApplicationDetail], typing.List[ApplicationDetail]]:
     """
     Process job application data using a specified form agent.
@@ -48,6 +50,10 @@ async def process_application_data(
     :param browser_type: The type of browser to use for processing applications.
     :param browser_options: Optional dictionary of options for the `playwright` browser type.
     :param retry_limit: Maximum number of retries for processing each application.
+    :param retry_backoff: Base backoff time in seconds for retries. The backoff time will increase by
+        a factor of the retry count, for every retry attempt.
+    :param take_screenshots: If True, application confirmation/submission screenshots will be taken.
+    :param screenshots_dir: Optional path to directory where screenshots should be stored.
     :return: A list of ApplicationDetail objects containing the results of the processing.
     """
     if not await form_agent.check_url(application_url):
@@ -66,15 +72,29 @@ async def process_application_data(
         ) as browser_context,
     ):
         results: typing.List[ApplicationDetail[ApplicantProfile]] = []
-        for batch in batched(application_data, n=batch_size):
-            applications = [
-                ApplicationInfo(
+        for index, batch in enumerate(batched(application_data, n=batch_size), start=1):
+            logger.info(f"\nProcessing batch {index} of job applications...\n")
+
+            applications = []
+            for applicant_data in batch:
+                applicant_profile = ApplicantProfile.model_validate(applicant_data)
+                screenshot_file_path = None
+                if take_screenshots:
+                    screenshots_dir = screenshots_dir or Path.cwd() / "screenshots"
+                    screenshots_dir.mkdir(mode=0o777, parents=True, exist_ok=True)
+                    screenshot_file_path = (
+                        screenshots_dir
+                        / f"application_{index}_{applicant_profile.email}.png"
+                    )
+                
+                application_info = ApplicationInfo(
                     url=application_url,
-                    profile=ApplicantProfile.model_validate(applicant_data),
+                    profile=applicant_profile,
                     agent=form_agent,
+                    take_screenshot=take_screenshots,
+                    screenshot_file_path=screenshot_file_path,
                 )
-                for applicant_data in batch
-            ]
+                applications.append(application_info)
             results.extend(await process_applications(browser_context, applications))
 
         confirmed_applications, unconfirmed_applications = sort_applications(results)
@@ -84,13 +104,12 @@ async def process_application_data(
             retries += 1
             back_off *= retries
             logger.info(
-                f"Retrying {len(unconfirmed_applications)} applications in {back_off} seconds...\n"
+                f"\nRetrying {len(unconfirmed_applications)} applications in {back_off} seconds...\n"
             )
             await asyncio.sleep(back_off)
 
             confirmed, unconfirmed_applications = await retry_unconfirmed_applications(
                 unconfirmed_applications,
-                form_agent=form_agent,
                 browser_context=browser_context,
                 batch_size=batch_size,
             )
@@ -122,7 +141,6 @@ def sort_applications(
 
 async def retry_unconfirmed_applications(
     application_details: typing.Iterable[ApplicationDetail[ApplicantProfile]],
-    form_agent: AsyncFormAgent,
     browser_context: BrowserContext,
     batch_size: int = 10,
 ) -> typing.Tuple[
@@ -130,24 +148,16 @@ async def retry_unconfirmed_applications(
     typing.List[ApplicationDetail[ApplicantProfile]],
 ]:
     """
-    Retry processing job applications with the specified parameters.
+    Retry processing unconfirmed job applications.
 
-    :param application_details: Iterable of ApplicationDetail objects to retry.
-    :param form_agent: The form agent to use for processing applications.
+    :param application_details: Iterable of `ApplicationDetail` objects for unconfirmed applications to retry.
     :param browser_context: The browser context to interact with.
     :param batch_size: Number of applications to process in a single batch.
     :return: A tuple containing two lists: confirmed applications and unconfirmed applications.
     """
     results = []
     for batch in batched(application_details, n=batch_size):
-        applications = [
-            ApplicationInfo(
-                url=application_detail.url,
-                profile=application_detail.profile,
-                agent=form_agent,
-            )
-            for application_detail in batch
-        ]
+        applications = [application_detail.info for application_detail in batch]
         results.extend(await process_applications(browser_context, applications))
     return sort_applications(results)
 
@@ -195,10 +205,16 @@ async def retry_unconfirmed_applications(
     help="Number of times to retry processing unconfirmed applications.",
 )
 @click.option(
-    "--screenshots",
+    "--screenshots/--no-screenshots",
+    "take_screenshots",
+    is_flag=True,
+    default=False,
+    help="If enabled, application confirmation/submission screenshots will be taken.",
+)
+@click.option(
+    "--screenshots_dir",
     type=click.Path(exists=True, dir_okay=True, file_okay=False, writable=True),
-    help="If provided, application confirmation/submission screenshots would be taken. "
-    "Path to directory where screenshots should be stored.",
+    help="Path to directory where screenshots should be stored.",
     required=False,
     default=None,
 )
@@ -210,9 +226,12 @@ def main(
     browser_type: BrowserType = BrowserType.CHROMIUM,
     options_file: typing.Optional[typing.BinaryIO] = None,
     retry_limit: int = 0,
-    screenshots: typing.Optional[Path] = None,
+    take_screenshots: bool = False,
+    screenshots_dir: typing.Optional[Path] = None,
 ) -> None:
     """
+    *CLI entrypoint for processing job applications.*
+
     Process job applications using a specified form agent.
 
     :param application_url: The URL of the job application form.
@@ -222,7 +241,8 @@ def main(
     :param browser_type: The type of browser to use for processing applications.
     :param options_file: Optional YAML configuration file for browser options.
     :param retry_limit: Maximum number of retries for processing each application.
-    :param screenshots: Path to directory where screenshots should be stored.
+    :param take_screenshots: If enabled, application confirmation/submission screenshots will be taken.
+    :param screenshots_dir: Path to directory where screenshots should be stored.
     """
     if not agent_name:
         form_agent = next(iter(FORM_AGENTS.values()), None)
@@ -231,9 +251,9 @@ def main(
     else:
         form_agent = FORM_AGENTS[agent_name]
 
-    if screenshots and not isinstance(form_agent, AdvancedFormAgent):
+    if take_screenshots and not isinstance(form_agent, AdvancedFormAgent):
         raise ValueError(
-            f"Agent '{agent_name}' does not support screenshots. "
+            f"Agent '{form_agent.name}' does not support screenshots. "
             "Please use an agent that supports advanced features."
         )
 
@@ -253,6 +273,8 @@ def main(
             browser_type=BrowserType(browser_type),
             browser_options=browser_options,
             retry_limit=retry_limit,
+            take_screenshots=take_screenshots,
+            screenshots_dir=(Path(screenshots_dir) if screenshots_dir else None),
         )
     )
     display_application_results(results)
@@ -267,20 +289,30 @@ def display_application_results(
     confirmed, unconfirmed = results
     click.echo(
         click.style(
-            f"{len(confirmed) + len(unconfirmed)} applications processed!",
+            f"{len(confirmed) + len(unconfirmed)} applications processed!\n",
             fg="white",
             bold=True,
         )
     )
     for application in chain(confirmed, unconfirmed):
+        info = application.info
+        color = (
+            "green"
+            if application.status == "confirmed"
+            else "yellow"
+            if application.status == "submitted"
+            else "red"
+        )
         click.echo(
             click.style(
-                f"Application for {application.profile.full_name} "
-                f"({application.profile.email}) - Status: {application.status}\n",
-                fg="blue"
-                if application.status == "confirmed"
-                else "yellow"
-                if application.status == "submitted"
-                else "red",
+                f"Application for {info.profile.full_name} "
+                f"({info.profile.email}) - Status: {application.status}\n",
+                fg=color,
             )
         )
+    click.echo(
+        click.style(
+            f"Confirmed: {len(confirmed)}, Unconfirmed: {len(unconfirmed)}\n",
+            fg="cyan",
+        )
+    )

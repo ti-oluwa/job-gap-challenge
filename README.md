@@ -41,13 +41,13 @@ I have provided a CLI interface for the application. You can run it using the fo
 In the project's base directory, execute:
 
 ```bash
-uv run -m cli.main process_job_applications '<application_url>' '<path_to_applicant_data.json>' --agent 'google' --browser-options '<path_to_browser_options.yaml>' --retry '<retry_count>'
+uv run -m cli.main process_job_applications '<application_url>' '<path_to_applicant_data.json>' --agent 'google' --browser-options '<path_to_browser_options.yaml>' --batch-size '<batch_size>' --retry '<retry_count>'
 ```
 
 For example, using the provided sample data:
 
 ```bash
-uv run -m cli.main process_job_applications 'https://docs.google.com/forms/d/e/1FAIpQLScqvt7Qu7yOLiJf-foH51Fg3gNxgmvQe6Uerxhtp4x_t9WHug/viewform' 'cli/resources/data.json' --browser-options 'cli/configs/browser-options.yaml' --retry 1
+uv run -m cli.main process_job_applications 'https://docs.google.com/forms/d/e/1FAIpQLScqvt7Qu7yOLiJf-foH51Fg3gNxgmvQe6Uerxhtp4x_t9WHug/viewform' 'cli/resources/data.json' --browser-options 'cli/configs/browser-options.yaml' --retry 1 --batch-size 5
 ```
 
 Or, run the command with the `--help` flag to see all available options:

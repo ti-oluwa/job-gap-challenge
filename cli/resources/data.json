@@ -19,5 +19,115 @@
             "Full-stack"
         ],
         "comments": "Looking forward to this opportunity."
+    },
+    {
+        "fullName": "Alan Turing",
+        "email": "alan@example.com",
+        "country": "UK",
+        "experience": "10+ years",
+        "interests": [
+            "AI",
+            "Mathematics"
+        ],
+        "comments": "Eager to contribute and learn."
+    },
+    {
+        "fullName": "Margaret Hamilton",
+        "email": "margaret@example.com",
+        "country": "USA",
+        "experience": "12+ years",
+        "interests": [
+            "Software Engineering",
+            "Space Tech"
+        ],
+        "comments": "Happy to join such a great team."
+    },
+    {
+        "fullName": "Tim Berners-Lee",
+        "email": "tim@example.com",
+        "country": "UK",
+        "experience": "15+ years",
+        "interests": [
+            "Web Development",
+            "Standards"
+        ],
+        "comments": "Always excited about open web initiatives."
+    },
+    {
+        "fullName": "Katherine Johnson",
+        "email": "katherine@example.com",
+        "country": "USA",
+        "experience": "9-12 years",
+        "interests": [
+            "Data Science",
+            "Analytics"
+        ],
+        "comments": "Ready to apply my analytical skills."
+    },
+    {
+        "fullName": "Dennis Ritchie",
+        "email": "dennis@example.com",
+        "country": "USA",
+        "experience": "20+ years",
+        "interests": [
+            "Systems Programming",
+            "C Programming"
+        ],
+        "comments": "Looking forward to sharing my experience."
+    },
+    {
+        "fullName": "Radia Perlman",
+        "email": "radia@example.com",
+        "country": "USA",
+        "experience": "18+ years",
+        "interests": [
+            "Networking",
+            "Security"
+        ],
+        "comments": "Networking is my passion."
+    },
+    {
+        "fullName": "Barbara Liskov",
+        "email": "barbara@example.com",
+        "country": "USA",
+        "experience": "14-17 years",
+        "interests": [
+            "Distributed Systems",
+            "Programming Languages"
+        ],
+        "comments": "Love solving tough distributed problems."
+    },
+    {
+        "fullName": "Yukihiro Matsumoto",
+        "email": "matsumoto@example.com",
+        "country": "Japan",
+        "experience": "16+ years",
+        "interests": [
+            "Programming Languages",
+            "Developer Experience"
+        ],
+        "comments": "Happy to promote developer-friendly tools."
+    },
+    {
+        "fullName": "Guido van Rossum",
+        "email": "guido@example.com",
+        "country": "Netherlands",
+        "experience": "20+ years",
+        "interests": [
+            "Python",
+            "Education"
+        ],
+        "comments": "Always glad to meet the community."
+    },
+    {
+        "fullName": "Linus Torvalds",
+        "email": "linus@example.com",
+        "country": "Finland",
+        "experience": "25+ years",
+        "interests": [
+            "Kernel Development",
+            "Open Source"
+        ],
+        "comments": "Open source is a way of life."
     }
 ]

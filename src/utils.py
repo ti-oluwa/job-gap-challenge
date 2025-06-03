@@ -2,8 +2,9 @@ import typing
 import functools
 import asyncio
 import difflib
+import time
 
-from contextlib import asynccontextmanager
+from contextlib import asynccontextmanager, contextmanager
 from urllib.parse import urlparse
 
 from src.logging import logger
@@ -122,3 +123,20 @@ def format_url(url_like: str) -> str:
     fragment = f"#{parsed_url.fragment}" if parsed_url.fragment else ""
 
     return f"{scheme}{netloc}{path}{query}{fragment}"
+
+
+@contextmanager
+def timeit(label: str) -> typing.Generator[None, None, None]:
+    """
+    Context manager to measure the execution time of a block of code.
+
+    :param label: A label or identifier for the timed block.
+    :return: A generator that yields control to the block of code being timed.
+    """
+    start_time = time.perf_counter()
+    try:
+        yield
+    finally:
+        end_time = time.perf_counter()
+        elapsed_time = end_time - start_time
+        logger.info(f"{label} completed in {elapsed_time:.2f} seconds.")
