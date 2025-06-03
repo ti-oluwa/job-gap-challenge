@@ -1,10 +1,10 @@
 # Job Gap Browser Automation Challenge
 
-This repository contains Daniel Afolayan's solution for the second interview task in the Job Gap AI series. It includes implementations for processing job applications for various applicant profiles.
+This repository contains my solution for the Job Gap browser automation challenge. It includes implementations for processing job applications for various applicant profiles.
 
 ## Quick Setup with `uv`
 
-Please ensure you have `uv` installed. If visit [uv's documentation](https://docs.astral.sh/uv/getting-started/installation/) for installation instructions.
+Please ensure you have `uv` installed. If not, visit [uv's documentation](https://docs.astral.sh/uv/getting-started/installation/) for installation instructions.
 
 In the project's base directory, run the following command to set up the project:
 
