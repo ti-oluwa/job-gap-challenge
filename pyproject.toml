@@ -1,0 +1,16 @@
+[project]
+name = "job-gap-interview-2"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "aiofiles>=24.1.0",
+    "click>=8.2.1",
+    "more-itertools>=10.7.0",
+    "orjson>=3.10.18",
+    "playwright>=1.52.0",
+    "pydantic[email]>=2.11.5",
+    "pyyaml>=6.0.2",
+    "rich>=14.0.0",
+]

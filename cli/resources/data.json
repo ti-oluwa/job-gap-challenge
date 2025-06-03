@@ -1,0 +1,23 @@
+[
+    {
+        "fullName": "Ada Lovelace",
+        "email": "ada@example.com",
+        "country": "UK",
+        "experience": "5-8 years",
+        "interests": [
+            "Backend",
+            "Automation"
+        ],
+        "comments": "Excited to participate!"
+    },
+    {
+        "fullName": "Grace Hopper",
+        "email": "grace@example.com",
+        "country": "USA",
+        "experience": "8+ years",
+        "interests": [
+            "Full-stack"
+        ],
+        "comments": "Looking forward to this opportunity."
+    }
+]

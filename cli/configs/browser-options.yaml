@@ -1,0 +1,7 @@
+timeout: 6000
+slow_mo: 50
+headless: False
+context_options: 
+  java_script_enabled: True
+  reduced_motion: 'reduce'
+  proxy: null
