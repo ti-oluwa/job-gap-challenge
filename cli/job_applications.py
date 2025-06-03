@@ -1,7 +1,5 @@
 import asyncio
 from collections.abc import Sequence
-from email.policy import default
-import re
 import typing
 import click
 import orjson
